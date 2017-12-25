@@ -1,5 +1,8 @@
 import random
 
+#TODO - Add Double functionality
+#TODO - Make more interactive
+
 
 class Player(object):
 
