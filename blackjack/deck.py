@@ -1,5 +1,6 @@
-import random
+from __future__ import annotations
 
+import random
 
 FACE_CARDS = ("A", "K", "Q", "J")
 
