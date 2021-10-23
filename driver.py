@@ -1,5 +1,5 @@
 from blackjack.console import console
-from blackjack.game import Game
+from blackjack import Game
 from blackjack.player import Player
 
 

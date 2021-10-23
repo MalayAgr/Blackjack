@@ -1,7 +1,7 @@
 from __future__ import annotations
-from collections import UserList
 
 import random
+from collections import UserList
 
 
 class Card:

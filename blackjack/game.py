@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import List, Optional, Tuple, Union
+from typing import List, Tuple
 
 from rich.panel import Panel
 from rich.prompt import Confirm, FloatPrompt, IntPrompt
