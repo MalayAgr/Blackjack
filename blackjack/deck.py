@@ -33,6 +33,9 @@ class Card:
 
         return self._pip if pip not in self.face_cards else 10
 
+    def is_ace(self):
+        return self.pip == "A"
+
 
 class Deck:
     def __init__(self, multiplier=1) -> None:
@@ -63,7 +66,9 @@ class Hand(UserList):
 
         count = 0
 
-        for card in self:
-            count += card.value(current_count=count)
+        count = sum(card.value() for card in self if not card.is_ace())
+
+        for ace in (card for card in self if card.is_ace()):
+            count += ace.value(current_count=count)
 
         return count
