@@ -28,3 +28,6 @@ class Hand:
 
     def add_card(self, card: str) -> None:
         self.cards.append(card)
+
+    def clear(self) -> None:
+        self.cards.clear()
