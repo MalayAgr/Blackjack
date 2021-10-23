@@ -267,9 +267,7 @@ class Game:
 
         winner = None
 
-        if (p_count <= 21 and d_count < p_count) or (
-            p_count > 21 and d_count > p_count
-        ):
+        if p_count <= 21 and (d_count < p_count or d_count > 21):
             winner = self.player
 
         if winner is self.player:
@@ -282,6 +280,15 @@ class Game:
                 "[/bold green]"
             )
             self.player.pay(self.current_bet + won)
+            return
+
+        if p_count > 21:
+            _print_centered(
+                "[bold red]"
+                "D'oh! You have busted.\n"
+                "You didn't win anything. :frowning:"
+                "[/bold red]"
+            )
             return
 
         _print_centered(
