@@ -41,9 +41,12 @@ class Card:
 
 
 class Deck:
-    def __init__(self) -> None:
-        self._deck = [Card(card) for card in range(2, 15)] * 4
+    def __init__(self, multiplier=1) -> None:
+        self._deck = [Card(card) for card in range(2, 15)] * (4 * multiplier)
         self._deck_state: list[Card] = []
+
+    def __bool__(self) -> bool:
+        return bool(self._deck_state)
 
     def shuffle(self):
         """Shuffle the deck."""
@@ -54,3 +57,6 @@ class Deck:
         """Pick a card from the deck."""
         deck = self._deck_state or self._deck
         return deck.pop()
+
+    def reset(self) -> None:
+        self._deck_state.clear()
