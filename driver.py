@@ -1,5 +1,3 @@
-import os
-
 from blackjack.console import console
 from blackjack.game import Game
 from blackjack.player import Player
@@ -17,13 +15,16 @@ def welcome():
 
 
 def main():
+    console.rule("[bold red]Blackjack by Malay Agarwal[/bold red]")
     try:
         welcome()
 
         player = Player.from_input()
 
         input("Press ENTER to start playing.")
-        os.system("cls||clear")
+        console.clear()
+
+        console.rule("[bold red]Blackjack by Malay Agarwal[/bold red]")
 
         game = Game(player)
         game.play()
