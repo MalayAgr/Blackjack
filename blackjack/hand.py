@@ -7,27 +7,14 @@ from typing import List
 from .deck import Card
 
 
-class Hand:
-    def __init__(self) -> None:
-        self.cards: List[Card] = []
-
-    def __getitem__(self, key: int) -> Card:
-        return self.cards[key]
-
-    def __contains__(self, item: Card) -> bool:
-        return item in self.cards
-
-    def count(self) -> int:
-        if not self.cards:
+class Hand(UserList):
+    def get_count(self) -> int:
+        if not self:
             return 0
 
         count = 0
 
-        for card in self.cards:
+        for card in self:
             count += card.value(current_count=count)
 
-    def add_card(self, card: str) -> None:
-        self.cards.append(card)
-
-    def clear(self) -> None:
-        self.cards.clear()
+        return count
