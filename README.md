@@ -12,7 +12,15 @@ A simple Python program which emulates a game of Blackjack.
 
 To play, `cd` to the project directory and execute the following:
 
-```shell
+- Install requirements
+
+```console
+$ pip install -r requirements.txt
+```
+
+- Play!
+
+```console
 $ python driver.py
 ```
 
