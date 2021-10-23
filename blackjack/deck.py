@@ -1,11 +1,11 @@
 from __future__ import annotations
+from collections import UserList
 
 import random
 
 
 class Card:
     face_cards = ("A", "K", "Q", "J")
-    ten_cards = ("10", "K", "Q", "J")
     ace_values = (1, 11)
 
     def __init__(self, pip: int) -> None:
@@ -33,12 +33,6 @@ class Card:
 
         return self._pip if pip not in self.face_cards else 10
 
-    def is_ten_card(self) -> bool:
-        return self.pip in self.ten_cards
-
-    def is_ace(self) -> bool:
-        return self.pip == "A"
-
 
 class Deck:
     def __init__(self, multiplier=1) -> None:
@@ -60,3 +54,16 @@ class Deck:
 
     def reset(self) -> None:
         self._deck_state.clear()
+
+
+class Hand(UserList):
+    def get_count(self) -> int:
+        if not self:
+            return 0
+
+        count = 0
+
+        for card in self:
+            count += card.value(current_count=count)
+
+        return count
