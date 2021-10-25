@@ -76,6 +76,12 @@ class _Move(Enum):
         return f"{moves}\n{prompt}", choices
 
 
+def _get_move(double: bool = False) -> _Move:
+    prompt, choices = _Move.make_prompt(double=double)
+    choice = IntPrompt.ask(prompt, choices=choices)
+    return list(_Move)[choice - 1]
+
+
 class Game:
     def __init__(self, player: Player) -> None:
         self.deck = Deck()
@@ -169,11 +175,6 @@ class Game:
 
         return blackjack
 
-    def _get_move(self, double: bool = False) -> _Move:
-        prompt, choices = _Move.make_prompt(double=double)
-        choice = IntPrompt.ask(prompt, choices=choices)
-        return list(_Move)[choice - 1]
-
     def _hit(self, player: Union[Player, Dealer]) -> Card:
         card = self.deck.pick_card()
         player.add_card_to_hand(card)
@@ -200,7 +201,7 @@ class Game:
         _print_centered(f"[red]It's your turn, {self.player.name}.[/red]")
 
         double = self.player.bankroll > self.current_bet
-        move = self._get_move(double=double)
+        move = _get_move(double=double)
 
         if move is _Move.DOUBLE:
             self._double()
@@ -216,7 +217,7 @@ class Game:
 
                 self._show_state()
 
-                move = self._get_move()
+                move = _get_move()
 
         self._show_state()
 
