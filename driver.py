@@ -3,21 +3,21 @@ from blackjack import Game
 from blackjack.player import Player
 
 
-def welcome():
-    msg = """
+def welcome() -> str:
+    return """
     [green]Welcome to BlackJack!
     This will be a single player game against the computer (dealer).
     We'll be playing from a single 52-cards deck.
     To know the rules and regulations of Blackjack, see https://bicyclecards.com/how-to-play/blackjack/.
     You can exit anytime by pressing CTRL + C.[/green]
+    \n\n
     """
-    console.print(msg, end="\n\n\n")
 
 
-def main():
+def main() -> None:
     console.rule("[bold red]Blackjack by Malay Agarwal[/bold red]")
     try:
-        welcome()
+        console.print(welcome())
 
         player = Player.from_input()
 

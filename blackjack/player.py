@@ -18,10 +18,10 @@ class _GenericPlayer:
     def add_card_to_hand(self, card: Card) -> None:
         self.hand.append(card)
 
-    def has_blackjack(self):
+    def has_blackjack(self) -> bool:
         return self.count() == 21
 
-    def has_busted(self):
+    def has_busted(self) -> bool:
         return self.count() > 21
 
     def clear_hand(self) -> None:
@@ -43,10 +43,10 @@ class Player(_GenericPlayer):
 
         return cls(name=name, bankroll=bankroll)
 
-    def pay(self, amount: float):
+    def pay(self, amount: float) -> None:
         self.bankroll += amount
 
-    def bet(self, amount: float):
+    def bet(self, amount: float) -> None:
         self.bankroll -= amount
 
 

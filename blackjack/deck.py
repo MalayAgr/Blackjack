@@ -33,7 +33,7 @@ class Card:
 
         return self._pip if pip not in self.face_cards else 10
 
-    def is_ace(self):
+    def is_ace(self) -> bool:
         return self.pip == "A"
 
 
@@ -45,7 +45,7 @@ class Deck:
     def __bool__(self) -> bool:
         return bool(self._deck_state)
 
-    def shuffle(self):
+    def shuffle(self) -> None:
         """Shuffle the deck."""
         self._deck_state = list(self._deck)
         random.shuffle(self._deck_state)
@@ -63,8 +63,6 @@ class Hand(UserList):
     def get_count(self) -> int:
         if not self:
             return 0
-
-        count = 0
 
         count = sum(card.value() for card in self if not card.is_ace())
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Optional, Tuple, Union
 
 from rich.panel import Panel
 from rich.prompt import Confirm, FloatPrompt, IntPrompt
@@ -33,30 +33,22 @@ class _StatePanel:
             hand = player.hand
         return self._row_data(title=title, data=", ".join(str(card) for card in hand))
 
-    def _player_hand(self) -> str:
-        return self._hand(self.player, "Your Hand")
-
-    def _dealer_hand(self) -> str:
-        hand = [self.dealer.face_up, "_"] if self.dealer.has_face_down else None
-        return self._hand(self.dealer, title="Dealer's Hand", hand=hand)
-
-    def _dealer_count(self) -> str:
-        count = "N/A" if self.dealer.has_face_down else self.dealer.count()
-        return self._row_data(title="Dealer's Count", data=count)
-
     def make_state_panel(self, bet) -> Panel:
         grid = Table.grid(expand=True)
 
         for _ in range(6):
             grid.add_column()
 
+        dealer_hand = [self.dealer.face_up, "_"] if self.dealer.has_face_down else None
+        dealer_count = "N/A" if self.dealer.has_face_down else self.dealer.count()
+
         grid.add_row(
-            self._player_hand(),
+            self._hand(player=self.player, title="Your Hand"),
             self._row_data(title="Count", data=self.player.count()),
             self._row_data(title="Bet", data=f"${bet}"),
             self._row_data(title="Bankroll", data=f"${self.player.bankroll}"),
-            self._dealer_hand(),
-            self._dealer_count(),
+            self._hand(player=self.dealer, title="Dealer's Hand", hand=dealer_hand),
+            self._row_data(title="Dealer's Count", data=dealer_count),
         )
         return Panel(grid)
 
@@ -98,10 +90,9 @@ class Game:
 
     def play(self) -> None:
         """Game loop."""
-        playing = True
         n_round = 1
 
-        while playing:
+        while True:
             console.rule(f"[bold blue]Round {n_round}[/bold blue]")
 
             self._ask_bet()
@@ -127,8 +118,7 @@ class Game:
 
             next_round = Confirm.ask("Play another round?")
             if not next_round:
-                playing = False
-                continue
+                break
 
             self.deck.reset()
             self.player.clear_hand()
@@ -142,7 +132,7 @@ class Game:
     ## UTILITY FUNCTIONS USED BY play() ##
     ######################################
 
-    def _show_state(self):
+    def _show_state(self) -> None:
         panel = self._panel.make_state_panel(bet=self.current_bet)
         console.print(panel)
 
@@ -172,25 +162,37 @@ class Game:
             self.dealer.add_card_to_hand(card)
 
     def _natural(self) -> bool:
-        if self.player.has_blackjack():
-            _print_centered("[blink bold red]BLACKJACK![/blink bold red]")
-            return True
-        return False
+        blackjack = self.player.has_blackjack()
 
-    def _get_move(self, double=False) -> _Move:
+        if blackjack is True:
+            _print_centered("[blink bold red]BLACKJACK![/blink bold red]")
+
+        return blackjack
+
+    def _get_move(self, double: bool = False) -> _Move:
         prompt, choices = _Move.make_prompt(double=double)
         choice = IntPrompt.ask(prompt, choices=choices)
         return list(_Move)[choice - 1]
 
-    def _hit(self, player) -> Card:
+    def _hit(self, player: Union[Player, Dealer]) -> Card:
         card = self.deck.pick_card()
         player.add_card_to_hand(card)
         return card
 
-    def _double(self):
+    def _double(self) -> None:
         self.player.bet(amount=self.current_bet)
         self.current_bet *= 2
-        self._hit(self.player)
+
+        _print_centered(
+            f"You've doubled the bet to [bold green]{self.current_bet}[/bold green].\n"
+            "The dealer will deal a card to you..."
+        )
+
+        time.sleep(1)
+
+        card = self._hit(self.player)
+
+        console.print(f"[red]You've been dealt a [bold]{card}[/bold].[/red]")
 
     def _players_turn(self) -> None:
         time.sleep(1)
@@ -218,7 +220,7 @@ class Game:
 
         self._show_state()
 
-    def _dealers_turn(self, natural):
+    def _dealers_turn(self, natural: bool) -> None:
         time.sleep(1)
 
         _print_centered(f"[red]It's the dealer's turn.[/red]")
@@ -247,9 +249,9 @@ class Game:
                 console.print(msg)
                 self._show_state()
 
-            _print_centered("[red]Dealer's count is [bold] >= 17[/bold][/red].")
+            _print_centered("[red]Dealer's count is [bold]>= 17[/bold].[/red]")
 
-    def _winner(self, natural: bool) -> None:
+    def _winner(self, natural: bool) -> Optional[Player]:
         _print_centered("[red]Determining winner....[/red]")
 
         time.sleep(1)
@@ -265,12 +267,7 @@ class Game:
             )
             return
 
-        winner = None
-
         if p_count <= 21 and (d_count < p_count or d_count > 21):
-            winner = self.player
-
-        if winner is self.player:
             won = 1.5 * self.current_bet if natural is True else self.current_bet
 
             _print_centered(
@@ -280,7 +277,7 @@ class Game:
                 "[/bold green]"
             )
             self.player.pay(self.current_bet + won)
-            return
+            return self.player
 
         if p_count > 21:
             _print_centered(
