@@ -223,7 +223,7 @@ class Game:
     def _dealers_turn(self, natural: bool) -> None:
         time.sleep(1)
 
-        _print_centered(f"[red]It's the dealer's turn.[/red]")
+        _print_centered("[red]It's the dealer's turn.[/red]")
 
         time.sleep(1)
 
