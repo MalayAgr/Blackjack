@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from blackjack.console import console
 from blackjack import Game
 from blackjack.player import Player

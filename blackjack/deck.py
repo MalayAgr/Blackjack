@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import random
-from collections import UserList
 
 
 class Card:
@@ -23,7 +22,7 @@ class Card:
             return self.face_cards[self._pip - 11]
         return str(self._pip)
 
-    def value(self, current_count=None) -> int:
+    def value(self, current_count: int = None) -> int:
         pip = self.pip
 
         if pip == "A":
@@ -38,7 +37,13 @@ class Card:
 
 
 class Deck:
-    def __init__(self, multiplier=1) -> None:
+    multipliers = (1, 2, 4, 6, 8)
+
+    def __init__(self, multiplier: int = 1) -> None:
+        if multiplier not in self.multipliers:
+            msg = f"multiplier can only be one of {self.multipliers}"
+            raise ValueError(msg)
+
         self._deck = [Card(card) for card in range(2, 15)] * (4 * multiplier)
         self._deck_state: list[Card] = []
 
@@ -57,16 +62,3 @@ class Deck:
 
     def reset(self) -> None:
         self._deck_state.clear()
-
-
-class Hand(UserList):
-    def get_count(self) -> int:
-        if not self:
-            return 0
-
-        count = sum(card.value() for card in self if not card.is_ace())
-
-        for ace in (card for card in self if card.is_ace()):
-            count += ace.value(current_count=count)
-
-        return count

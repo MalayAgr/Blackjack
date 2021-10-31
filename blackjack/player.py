@@ -1,19 +1,29 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import List, Optional, Union
 
 from rich.prompt import FloatPrompt
 
 from .console import console
-from .deck import Card, Hand
+from .deck import Card
 
 
 class _GenericPlayer:
     def __init__(self) -> None:
-        self.hand = Hand()
+        self.hand: List[Card] = []
 
     def count(self) -> int:
-        return self.hand.get_count()
+        hand = self.hand
+
+        if not hand:
+            return 0
+
+        count = sum(card.value() for card in hand if not card.is_ace())
+
+        for ace in (card for card in hand if card.is_ace()):
+            count += ace.value(current_count=count)
+
+        return count
 
     def add_card_to_hand(self, card: Card) -> None:
         self.hand.append(card)
@@ -69,3 +79,6 @@ class Dealer(_GenericPlayer):
     def clear_hand(self) -> None:
         self.has_face_down = True
         return super().clear_hand()
+
+
+PlayerType = Union[Player, Dealer]

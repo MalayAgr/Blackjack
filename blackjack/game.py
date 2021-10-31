@@ -10,10 +10,10 @@ from rich.table import Table
 
 from .console import console
 from .deck import Card, Deck
-from .player import Dealer, Player
+from .player import Dealer, Player, PlayerType
 
 
-def _print_centered(msg):
+def _print_centered(msg: str) -> None:
     console.print(msg, justify="center")
 
 
@@ -28,12 +28,12 @@ class _StatePanel:
     def _row_data(self, title: str, data: str) -> str:
         return f"{self._tf.format(title)}{self._df.format(data)}"
 
-    def _hand(self, player, title, hand: List[str] = None) -> str:
+    def _hand(self, player: PlayerType, title: str, hand: List[str] = None) -> str:
         if hand is None:
             hand = player.hand
         return self._row_data(title=title, data=", ".join(str(card) for card in hand))
 
-    def make_state_panel(self, bet) -> Panel:
+    def make_state_panel(self, bet: float) -> Panel:
         grid = Table.grid(expand=True)
 
         for _ in range(6):
@@ -175,7 +175,7 @@ class Game:
 
         return blackjack
 
-    def _hit(self, player: Union[Player, Dealer]) -> Card:
+    def _hit(self, player: PlayerType) -> Card:
         card = self.deck.pick_card()
         player.add_card_to_hand(card)
         return card
