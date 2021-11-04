@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from rich.prompt import Confirm
+
 from blackjack.console import console
 from blackjack import Game
 from blackjack.player import Player
@@ -27,10 +29,23 @@ def main() -> None:
         input("Press ENTER to start playing.")
         console.clear()
 
-        console.rule("[bold red]Blackjack by Malay Agarwal[/bold red]")
-
         game = Game(player)
-        game.play()
+
+        n_round = 1
+
+        while True:
+            console.rule("[bold red]Blackjack by Malay Agarwal[/bold red]")
+            console.rule(f"[bold blue]Round {n_round}[/bold blue]")
+            game.play()
+
+            next_round = Confirm.ask("Play another round?")
+            if not next_round:
+                break
+
+            game.reset()
+            console.clear()
+            n_round += 1
+
     except KeyboardInterrupt:
         print("\nExiting...")
         exit()

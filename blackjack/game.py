@@ -257,60 +257,49 @@ class Game:
 
     def play(self) -> None:
         """Run one round of BlackJack."""
-        n_round = 1
+        self._ask_bet()
 
-        while True:
-            console.rule(f"[bold blue]Round {n_round}[/bold blue]")
+        if not self.deck:
+            self.deck.reset()
 
-            self._ask_bet()
+        _print_centered("[red]Shuffling deck...[/red]")
+        self.deck.shuffle()
 
-            if not self.deck:
-                self.deck.reset()
+        _print_centered("[red]Dealing initial cards...[/red]")
+        self._deal_initial_cards()
 
-            _print_centered("[red]Shuffling deck...[/red]")
-            self.deck.shuffle()
+        time.sleep(1)
+        self._show_state()
 
-            _print_centered("[red]Dealing initial cards...[/red]")
-            self._deal_initial_cards()
-
+        # Check if player has 21 on first two cards
+        if (natural := self.player.has_blackjack()) is True:
+            _print_centered("[blink bold red]BLACKJACK![/blink bold red]")
+        else:
             time.sleep(1)
-            self._show_state()
+            _print_centered(f"[red]It's your turn, {self.player.name}.[/red]")
 
-            # Check if player has 21 on first two cards
-            if (natural := self.player.has_blackjack()) is True:
-                _print_centered("[blink bold red]BLACKJACK![/blink bold red]")
-            else:
-                time.sleep(1)
-                _print_centered(f"[red]It's your turn, {self.player.name}.[/red]")
+            self._players_turn()
 
-                self._players_turn()
+        time.sleep(1)
 
-            time.sleep(1)
+        _print_centered("[red]It's the dealer's turn.[/red]")
 
-            _print_centered("[red]It's the dealer's turn.[/red]")
+        time.sleep(1)
 
-            time.sleep(1)
+        self._dealers_turn(natural=natural)
 
-            self._dealers_turn(natural=natural)
+        time.sleep(1)
 
-            time.sleep(1)
+        _print_centered("[red]Determining winner....[/red]")
 
-            _print_centered("[red]Determining winner....[/red]")
+        time.sleep(1)
 
-            time.sleep(1)
+        self._winner(natural=natural)
 
-            self._winner(natural=natural)
-
-            next_round = Confirm.ask("Play another round?")
-            if not next_round:
-                break
-
-            self.player.clear_hand()
-            self.dealer.clear_hand()
-            self.current_bet = 0
-            n_round += 1
-
-            console.clear()
+    def reset(self) -> None:
+        self.player.clear_hand()
+        self.dealer.clear_hand()
+        self.current_bet = 0
 
     ####################################
     ## UTILITY METHODS USED BY play() ##
