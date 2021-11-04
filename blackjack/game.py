@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
 from rich.panel import Panel
-from rich.prompt import Confirm, FloatPrompt, Prompt
+from rich.prompt import FloatPrompt, Prompt
 from rich.table import Table
 
 from .console import console
