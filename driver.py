@@ -6,6 +6,7 @@ from blackjack.player import Player
 
 
 def welcome() -> str:
+    """Function which returns the welcome message."""
     return """
     [green]Welcome to BlackJack!
     This will be a single player game against the computer (dealer).
