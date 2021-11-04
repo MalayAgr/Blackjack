@@ -245,6 +245,11 @@ class Game:
     """
 
     def __init__(self, player: Player) -> None:
+        """
+        Arguments
+        ----------
+        player: Player instance for this game.
+        """
         self.deck = Deck()
 
         self.dealer = Dealer()
